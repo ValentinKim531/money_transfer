@@ -4,14 +4,11 @@ import json
 import sqlite3
 import threading
 import os
+from pathlib import Path
 
-
-BASE_DIR = os.getenv(
-    "DATA_DIR",
-    os.path.join(os.path.dirname(__file__), "..", "money_transfer", "data"),
-)
-os.makedirs(BASE_DIR, exist_ok=True)
-_AUDIT_DB = os.path.join(BASE_DIR, "audit_log.sqlite")
+DATA_DIR = Path(os.getenv("DATA_DIR", "./data")).resolve()
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+_AUDIT_DB = str(DATA_DIR / "audit_log.sqlite")
 
 _lock = threading.Lock()
 
