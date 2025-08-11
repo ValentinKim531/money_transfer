@@ -101,4 +101,7 @@ curl -X POST http://localhost:8003/transfers \
   }'
 ```
 
-
+### Запуск теста
+```bash
+pytest test_transfer_flow.py -v
+```

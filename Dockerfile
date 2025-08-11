@@ -9,7 +9,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential curl wget && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./requirements.txt
-RUN pip install --no-cache-dir -r requgit remote add origin https://github.com/ValentinKim531/money_transfer.gitirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 ENV PYTHONPATH=/app
