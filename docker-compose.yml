@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.53
+    ports:
+      - "16686:16686"
+      - "6831:6831/udp"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:16686"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  auth:
+    build: .
+    command: uvicorn auth_service.main:app --host 0.0.0.0 --port 8001
+    env_file: .env
+    ports: ["8001:8001"]
+    volumes:
+      - ./:/app
+      - ./data:/app/money_transfer/data
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      jaeger:   { condition: service_healthy }
+
+  accounts:
+    build: .
+    command: uvicorn accounts_service.main:app --host 0.0.0.0 --port 8002
+    env_file: .env
+    ports: ["8002:8002"]
+    volumes:
+      - ./:/app
+      - ./data:/app/money_transfer/data
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      jaeger:   { condition: service_healthy }
+
+  transactions:
+    build: .
+    command: uvicorn transactions_service.main:app --host 0.0.0.0 --port 8003
+    env_file: .env
+    ports: ["8003:8003"]
+    volumes:
+      - ./:/app
+      - ./data:/app/money_transfer/data
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      jaeger:   { condition: service_healthy }
+
+  notifications:
+    build: .
+    command: python -m notifications_service.worker
+    env_file: .env
+    volumes:
+      - ./:/app
+    depends_on:
+      rabbitmq: { condition: service_healthy }
