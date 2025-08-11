@@ -7,17 +7,24 @@
 
 ## Запуск проекта
 
-1. Переименовать `.env.example` → `.env`  
+1. Склонировать проект с репозитария:
+```bash
+git clone https://github.com/ValentinKim531/money_transfer.git
+cd money_transfer
+````
+
+
+2. Переименовать `.env.example` → `.env`  
 ```bash
 cp .env.example .env
 ```
 
-2.	Собрать и запустить контейнеры:
+3. Собрать и запустить контейнеры:
 ```bash
 docker-compose up -d --build
 ```
 
-3. Доступы по умолчанию:
+4. Доступы по умолчанию:
 	•	Auth API: http://localhost:8001/docs
 	•	Accounts API: http://localhost:8002/docs
 	•	Transactions API: http://localhost:8003/docs
@@ -93,3 +100,5 @@ curl -X POST http://localhost:8003/transfers \
     "client_key": "tx-1-to-2-100-from"
   }'
 ```
+
+
