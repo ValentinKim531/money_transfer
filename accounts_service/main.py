@@ -35,9 +35,11 @@ SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-async def init_db() -> None:
+async def init_db():
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(
+            lambda sync_conn: Base.metadata.create_all(bind=sync_conn, checkfirst=True)
+        )
 
 
 async def close_db() -> None:
